@@ -26,15 +26,15 @@ public class CacheAccessTest {
     public static void main(String[] args) {
         Date date = new Date();
         long id = date.getTime();
-        
-        RedisCacheSetter<String> stringSetter = new RedisCacheSetterString("localhost", 6379);
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        stringSetter.setData("test:string:"+id, "redis data: " +dateFormat.format(date));
-        
-        RedisCacheSetter<Object> jsonSetter = new RedisCacheSetterJson("localhost", 6379);
         RedisData data = new RedisData();
         data.intData = id;
         data.dateData = date;
+       
+        RedisCacheSetter<String> stringSetter = new RedisCacheSetterString("localhost", 6379);
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        stringSetter.setData("test:string:"+data.intData, "redis data: " +dateFormat.format(data.dateData));
+        
+        RedisCacheSetter<Object> jsonSetter = new RedisCacheSetterJson("localhost", 6379);
         jsonSetter.setData("test:json:"+id, data);
     }
 
