@@ -14,9 +14,4 @@ public class RedisCacheSetterString extends RedisCacheSetter<String> {
         super(serverName, port, new CacheSetterFormatterString());
     }
 
-    @Override
-    public void setData(String key, String data) {
-        this.getServer().append(key, data);
-    }
-    
 }

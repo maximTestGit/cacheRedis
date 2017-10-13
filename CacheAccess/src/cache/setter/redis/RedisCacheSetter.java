@@ -16,5 +16,10 @@ public abstract class RedisCacheSetter<TData> extends RedisCacheBase implements 
         super(serverName, port);
         this.formatter = formatter;
     }
-
+    @Override
+    public void setData(String key, TData data) {
+        String saveData = this.formatter.Format(data);
+        this.getServer().append(key, saveData);
+    }
+    
 }
