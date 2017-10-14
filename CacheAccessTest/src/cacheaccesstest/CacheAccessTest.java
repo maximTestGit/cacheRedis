@@ -5,12 +5,14 @@
  */
 package cacheaccesstest;
 
+import cache.base.interfaces.CacheSetter;
 import cache.setter.redis.RedisCacheSetter;
-import cache.setter.redis.RedisCacheSetterJson;
-import cache.setter.redis.RedisCacheSetterString;
+//import cache.setter.redis.RedisCacheSetterJson;
+//import cache.setter.redis.RedisCacheSetterString;
+import cache.transform.CacheSetterFormatterJson;
+import cache.transform.CacheSetterFormatterString;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -30,11 +32,11 @@ public class CacheAccessTest {
         data.intData = id;
         data.dateData = date;
        
-        RedisCacheSetter<String> stringSetter = new RedisCacheSetterString("localhost", 6379);
+        CacheSetter<String> stringSetter = new RedisCacheSetter("localhost", 6379, new CacheSetterFormatterString());
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         stringSetter.setData("test:string:"+data.intData, "redis data: " +dateFormat.format(data.dateData));
         
-        RedisCacheSetter<Object> jsonSetter = new RedisCacheSetterJson("localhost", 6379);
+        CacheSetter<Object> jsonSetter = new RedisCacheSetter("localhost", 6379, new CacheSetterFormatterJson());
         jsonSetter.setData("test:json:"+id, data);
     }
 
