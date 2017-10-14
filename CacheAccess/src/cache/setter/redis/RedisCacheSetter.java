@@ -19,7 +19,7 @@ public abstract class RedisCacheSetter<TData> extends RedisCacheBase implements 
     @Override
     public void setData(String key, TData data) {
         String saveData = this.formatter.Format(data);
-        this.getServer().append(key, saveData);
+        this.getServer().set(key, saveData);
     }
     
 }
