@@ -175,7 +175,7 @@ public class RedisCacheTest {
                 null,
                 new DataSerializerJson()
         );
-        instance.setData(new Long(id).toString(), data);
+        instance.setData(Long.toString(id), data);
     }
 
     @Test
@@ -193,7 +193,7 @@ public class RedisCacheTest {
                 null,
                 new DataSerializerJson()
         );
-        instance.setData(new Long(id).toString(), data);
+        instance.setData(Long.toString(id), data);
     }
 
     public class RedisTestData {
