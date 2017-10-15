@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cache.redis;
+package cache.serialize;
 
 /**
  *
  * @author maxim
  */
-public interface DataSerializer {
-    <TPersist> String serialize(TPersist data);
+public interface DataSerializer<TData> {
+    String serialize(TData data);
 }

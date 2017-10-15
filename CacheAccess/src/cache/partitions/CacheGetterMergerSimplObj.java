@@ -7,10 +7,12 @@ package cache.partitions;
 
 import cache.base.interfaces.Cache;
 
-/**
- *
- * @author maxim
- */
-public interface CacheSetterSplitter<TData> {
-    Cache.KeyValues<TData> split(Cache.Key key, TData data);
+
+public class CacheGetterMergerSimplObj implements CacheGetterMerger<Object> {
+
+    @Override
+    public Object merge(Cache.KeyValues<Object> partitions) {
+        return partitions.values[0];
+    }
+    
 }

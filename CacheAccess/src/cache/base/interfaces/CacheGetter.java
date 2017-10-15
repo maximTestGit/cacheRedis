@@ -12,7 +12,7 @@ package cache.base.interfaces;
  * @param <TPersist>
  * @param <TData>
  */
-public interface CacheGetter<TData, TPersist> 
-            extends Cache<TData, TPersist> {
+public interface CacheGetter<TData> 
+            extends Cache<TData> {
     TData getData(Key key);
 }

@@ -12,7 +12,7 @@ package cache.base.interfaces;
  * @param <TPersist>
  * @param <TData>
  */
-public interface Cache<TData, TPersist> {
+public interface Cache<TData> {
 
     public class Key {
 
@@ -20,7 +20,12 @@ public interface Cache<TData, TPersist> {
         public String[] innerKeys;
     }
 
-    public class KeyValues<TPersist> extends Key {
-        public TPersist[] values;
+    public class KeyValues<TData> extends Key {
+
+        public KeyValues(Key key) {
+            outerKey = key.outerKey;
+            innerKeys = key.innerKeys;
+        }
+        public TData[] values;
     }
 }

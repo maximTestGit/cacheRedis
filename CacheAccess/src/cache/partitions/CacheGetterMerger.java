@@ -10,6 +10,7 @@ import cache.base.interfaces.Cache;
 /**
  *
  * @author maxim
+ * @param <TData>
  */
 public interface CacheGetterMerger<TData> {
     TData merge(Cache.KeyValues<TData> partitions);

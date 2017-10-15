@@ -11,7 +11,7 @@ package cache.base.interfaces;
  * @param <TKey>
  * @param <TData>
  */
-public interface CacheSetter<TData, TPersist> 
-        extends Cache<TData, TPersist> {
+public interface CacheSetter<TData> 
+        extends Cache<TData> {
     void setData(Key key, TData data);
 }

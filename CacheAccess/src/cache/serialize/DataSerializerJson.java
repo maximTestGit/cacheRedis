@@ -3,18 +3,18 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cache.redis;
+package cache.serialize;
 
 import com.google.gson.Gson;
 
 
-public class DataSerializerJson implements DataSerializer {
+public class DataSerializerJson implements DataSerializer<Object> {
 
     @Override
-    public <TPersist> String serialize(TPersist data) {
+    public String serialize(Object data) {
         Gson gson = new Gson();
         String result = gson.toJson(data);
         return result;
     }
-    
+   
 }

@@ -5,6 +5,7 @@
  */
 package cache.redis;
 
+import cache.serialize.DataSerializer;
 import cache.base.impl.CacheBase;
 import cache.partitions.CacheGetterMerger;
 import cache.partitions.CacheSetterSplitter;
@@ -21,8 +22,8 @@ import redis.clients.jedis.Jedis;
  * @param <TData>
  * @param <TPersist>
  */
-public class RedisCache<TData, TPersist>
-        extends CacheBase<TData, TPersist> {
+public class RedisCache<TData>
+        extends CacheBase<TData> {
 
     protected enum RedisDataType {
         STRING,
@@ -30,7 +31,7 @@ public class RedisCache<TData, TPersist>
         HASH
     }
     private Jedis server;
-    protected DataSerializer serializer;
+    private DataSerializer serializer;
 
     protected final Jedis getServer() {
         return this.server;
@@ -47,24 +48,24 @@ public class RedisCache<TData, TPersist>
 
     public RedisCache(
             String serverName, int port,
-            CacheSetterFormatter<TData, TPersist> setterFormatter,
-            CacheGetterTransformer<TData, TPersist> getterTransformer,
+//            CacheSetterFormatter<TData, TPersist> setterFormatter,
+//            CacheGetterTransformer<TData, TPersist> getterTransformer,
             CacheSetterSplitter<TData> setterSplitter,
             CacheGetterMerger<TData> getterMerger,
             DataSerializer serializer) {
-        super(setterFormatter, getterTransformer, setterSplitter, getterMerger);
+        super(setterSplitter, getterMerger);
         Jedis srv = new Jedis(serverName, port);
         this.serializer = serializer;
         this.setServer(srv);
     }
 
     @Override
-    protected KeyValues<TPersist> provideData(Key key) {
+    protected KeyValues<TData> provideData(Key key) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    protected void persistData(KeyValues<TPersist> data) throws IllegalArgumentException {
+    protected void persistData(KeyValues<TData> data) throws IllegalArgumentException {
         RedisDataType redisAction = determineRedisType(data);
         switch (redisAction) {
             case STRING:
@@ -81,7 +82,7 @@ public class RedisCache<TData, TPersist>
         }
     }
 
-    private RedisDataType determineRedisType(KeyValues<TPersist> data) {
+    private RedisDataType determineRedisType(KeyValues<TData> data) {
         RedisDataType result;
         if (data.innerKeys == null) {
             if (data.values.length == 1) {
@@ -96,25 +97,39 @@ public class RedisCache<TData, TPersist>
         return result;
     }
 
-    private void persistString(KeyValues<TPersist> data) {
-        this.getServer().set(data.outerKey, serializer.serialize(data.values[0]));
+    private void persistString(KeyValues<TData> data) {
+        this.getServer().set(data.outerKey, getSerializer().serialize(data.values[0]));
     }
 
-    private void persistList(KeyValues<TPersist> data) {
+    private void persistList(KeyValues<TData> data) {
         ArrayList<String> strings = new ArrayList<String>(data.values.length);
         for (int i = 0; i < data.values.length; i++) {
-            strings.add(serializer.serialize(data.values[i]));
+            strings.add(getSerializer().serialize(data.values[i]));
         }
         String[] stringArray = new String[strings.size()];
         this.getServer().lpush(data.outerKey, stringArray);
     }
 
-    private void persistHash(KeyValues<TPersist> data) {
+    private void persistHash(KeyValues<TData> data) {
         Map<String, String> set = new HashMap<>();
         for (int i = 0; i < data.values.length; i++) {
-            set.put(data.innerKeys[i], serializer.serialize(data.values[i]));
+            set.put(data.innerKeys[i], getSerializer().serialize(data.values[i]));
         }
         this.getServer().hmset(data.outerKey, set);
+    }
+
+    /**
+     * @return the serializer
+     */
+    protected DataSerializer getSerializer() {
+        return serializer;
+    }
+
+    /**
+     * @param serializer the serializer to set
+     */
+    protected void setSerializer(DataSerializer serializer) {
+        this.serializer = serializer;
     }
 
 }

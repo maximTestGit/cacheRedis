@@ -18,44 +18,44 @@ import cache.transform.CacheSetterFormatter;
  * @param <TPersist>
  * @param <TData>
  */
-public abstract class CacheBase<TData, TPersist>
-        implements CacheGetter<TData, TPersist>, CacheSetter<TData, TPersist> {
+public abstract class CacheBase<TData>
+        implements CacheGetter<TData>, CacheSetter<TData> {
 
-    protected CacheSetterFormatter<TData, TPersist> setterFormatter;
-    protected CacheGetterTransformer<TData, TPersist> getterTransformer;
+//    protected CacheSetterFormatter<TData, TPersist> setterFormatter;
+//    protected CacheGetterTransformer<TData, TPersist> getterTransformer;
     
     protected CacheSetterSplitter<TData> setterSplitter;
     protected CacheGetterMerger<TData> getterMerger;
 
     public CacheBase(
-            CacheSetterFormatter<TData, TPersist> setterFormatter, 
-            CacheGetterTransformer<TData, TPersist> getterTransformer,
+//            CacheSetterFormatter<TData, TPersist> setterFormatter, 
+//            CacheGetterTransformer<TData, TPersist> getterTransformer,
             CacheSetterSplitter<TData> setterSplitter,
             CacheGetterMerger<TData> getterMerger) {
         
-        this.setterFormatter = setterFormatter;
-        this.getterTransformer = getterTransformer;
+//        this.setterFormatter = setterFormatter;
+//        this.getterTransformer = getterTransformer;
         this.setterSplitter = setterSplitter;
         this.getterMerger = getterMerger;
     }
 
     @Override
     public TData getData(Key key) {
-        KeyValues<TPersist> values = provideData(key);
-        KeyValues<TData> partitions = getterTransformer.transform(values);
+        KeyValues<TData> partitions = provideData(key);
+//        KeyValues<TData> partitions = getterTransformer.transform(values);
         TData result = getterMerger.merge(partitions);
         return result;
     }
 
     @Override
     public void setData(Key key, TData data) {
-        KeyValues<TData> partitions = setterSplitter.split(data);
-        KeyValues<TPersist> values = setterFormatter.Format(partitions);
-        persistData(values);
+        KeyValues<TData> partitions = setterSplitter.split(key, data);
+//        KeyValues<TPersist> values = setterFormatter.Format(partitions);
+        persistData(partitions);
     }
 
-    protected abstract KeyValues<TPersist> provideData(Key key);
-    protected abstract void persistData(KeyValues<TPersist> data);
+    protected abstract KeyValues<TData> provideData(Key key);
+    protected abstract void persistData(KeyValues<TData> data);
     
     
 }

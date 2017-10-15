@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-private xmlns="http://www.netbeans.org/ns/project-private/1">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/D:/javaNetBeans/CacheAccess/test/cache/redis/RedisCacheTest.java</file>
+            <file>file:/D:/javaNetBeans/CacheAccess/src/cache/base/interfaces/CacheGetter.java</file>
+            <file>file:/D:/javaNetBeans/CacheAccess/src/cache/partitions/CacheSetterSplitter.java</file>
+            <file>file:/D:/javaNetBeans/CacheAccess/src/cache/base/interfaces/CacheSetter.java</file>
+            <file>file:/D:/javaNetBeans/CacheAccess/src/cache/partitions/CacheSetterSplitterSimpleObj.java</file>
+            <file>file:/D:/javaNetBeans/CacheAccess/src/cache/base/interfaces/Cache.java</file>
+        </group>
+    </open-files>
+</project-private>
