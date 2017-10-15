@@ -10,6 +10,7 @@ import cache.base.interfaces.CacheSetter;
 import cache.partitions.CacheSetterSplitter;
 import cache.serialize.DataSerializerJson;
 import java.lang.reflect.Array;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import org.junit.After;
@@ -180,7 +181,28 @@ public class RedisCacheTest {
         instance.setData(key, data);
     }
 
-    public class RedisTestData {
+    @Test
+    public void testSetData3() {
+        System.out.println("setData");
+
+        Date date = new Date();
+        long id = date.getTime();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String data = sdf.format(date);
+
+        Cache.Key key = new Cache.Key();
+        key.outerKey = "testSetData:" + id;
+
+        CacheSetter<String> instance = new RedisCache<>(
+                "localhost", 6379,
+                new CacheSetterSplitterRedisTestStringData(),
+                null,
+                new DataSerializerJson()
+        );
+        instance.setData(key, data);
+    }
+
+     public class RedisTestData {
 
         public Long intData;
         public Date dateData;
