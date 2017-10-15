@@ -15,8 +15,9 @@ import java.lang.reflect.Array;
 public class CacheSetterSplitterRedisStringData implements CacheSetterSplitter<String> {
 
     @Override
-    public Cache.KeyValues<String> split(Cache.Key key, String data) {
-        Cache.KeyValues<String> result = new Cache.KeyValues<>(key);
+    public Cache.KeyValues<String> split(String id, String data) {
+        Cache.KeyValues<String> result = new Cache.KeyValues<>();
+        result.outerKey = id;
         result.values = (String[]) Array.newInstance(String.class, 1);
         result.values[0] = data;
         return result;

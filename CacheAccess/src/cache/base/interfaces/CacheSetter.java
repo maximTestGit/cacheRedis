@@ -13,5 +13,5 @@ package cache.base.interfaces;
  */
 public interface CacheSetter<TData> 
         extends Cache<TData> {
-    void setData(Key key, TData data);
+    void setData(String id, TData data);
 }

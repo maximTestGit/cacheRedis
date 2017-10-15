@@ -38,8 +38,8 @@ public abstract class CacheBase<TData>
     }
 
     @Override
-    public void setData(Key key, TData data) {
-        KeyValues<TData> partitions = setterSplitter.split(key, data);
+    public void setData(String id, TData data) {
+        KeyValues<TData> partitions = setterSplitter.split(id, data);
         persistData(partitions);
     }
 

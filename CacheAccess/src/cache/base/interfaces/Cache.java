@@ -22,6 +22,9 @@ public interface Cache<TData> {
 
     public class KeyValues<TData> extends Key {
 
+        public KeyValues() {
+            super();
+        }
         public KeyValues(Key key) {
             outerKey = key.outerKey;
             innerKeys = key.innerKeys;

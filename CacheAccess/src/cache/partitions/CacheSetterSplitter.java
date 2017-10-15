@@ -12,5 +12,5 @@ import cache.base.interfaces.Cache;
  * @author maxim
  */
 public interface CacheSetterSplitter<TData> {
-    Cache.KeyValues<TData> split(Cache.Key key, TData data);
+    Cache.KeyValues<TData> split(String id, TData data);
 }

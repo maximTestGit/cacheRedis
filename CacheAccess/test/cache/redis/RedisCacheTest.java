@@ -148,16 +148,13 @@ public class RedisCacheTest {
         data.intData = id;
         data.dateData = date;
 
-        Cache.Key key = new Cache.Key();
-        key.outerKey = "testSetData:1:"+id;
-
         CacheSetter<Object> instance = new RedisCache<>(
                 "localhost", 6379,
                 new CacheSetterSplitterSimpleObj(),
                 null,
                 new DataSerializerJson()
         );
-        instance.setData(key, data);
+        instance.setData("testSetData:1:" + id, data);
     }
 
     @Test
@@ -169,17 +166,16 @@ public class RedisCacheTest {
         data.intData = id;
         data.dateData = date;
 
-        Cache.Key key = new Cache.Key();
-        key.outerKey = "testSetData:2:"+id;
-        key.innerKeys = new String[]{"date", "int"};
-
+//        Cache.Key key = new Cache.Key();
+//        key.outerKey = "testSetData:2:"+id;
+//        key.innerKeys = new String[]{"date", "int"};
         CacheSetter<RedisTestData> instance = new RedisCache<>(
                 "localhost", 6379,
                 new CacheSetterSplitterRedisTestData(),
                 null,
                 new DataSerializerJson()
         );
-        instance.setData(key, data);
+        instance.setData("testSetData:2:" + id, data);
     }
 
     @Test
@@ -191,19 +187,16 @@ public class RedisCacheTest {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String data = sdf.format(date);
 
-        Cache.Key key = new Cache.Key();
-        key.outerKey = "testSetData:" + id;
-
         CacheSetter<String> instance = new RedisCache<>(
                 "localhost", 6379,
                 new CacheSetterSplitterRedisStringData(),
                 null,
                 new DataSerializerJson()
         );
-        instance.setData(key, data);
+        instance.setData("testSetData:3:" + id, data);
     }
 
-     public class RedisTestData {
+    public class RedisTestData {
 
         public Long intData;
         public Date dateData;
@@ -213,8 +206,9 @@ public class RedisCacheTest {
     public class CacheSetterSplitterSimpleObj implements CacheSetterSplitter<Object> {
 
         @Override
-        public Cache.KeyValues<Object> split(Cache.Key key, Object data) {
-            Cache.KeyValues<Object> result = new Cache.KeyValues<>(key);
+        public Cache.KeyValues<Object> split(String id, Object data) {
+            Cache.KeyValues<Object> result = new Cache.KeyValues<>();
+            result.outerKey = id;
             result.values = (Object[]) Array.newInstance(Object.class, 1);
             result.values[0] = data;
             return result;
@@ -225,13 +219,15 @@ public class RedisCacheTest {
     public class CacheSetterSplitterRedisTestData implements CacheSetterSplitter<RedisTestData> {
 
         @Override
-        public Cache.KeyValues<RedisTestData> split(Cache.Key key, RedisTestData data) {
-            Cache.KeyValues<RedisTestData> result = new Cache.KeyValues<>(key);
+        public Cache.KeyValues<RedisTestData> split(String id, RedisTestData data) {
+            Cache.KeyValues<RedisTestData> result = new Cache.KeyValues<>();
+            result.outerKey = id;
+            result.innerKeys = new String[]{"date", "int"};
             result.values = (RedisTestData[]) Array.newInstance(RedisTestData.class, 2);
-            int iDate = Arrays.binarySearch(key.innerKeys, "date");
+            int iDate = Arrays.binarySearch(result.innerKeys, "date");
             result.values[iDate] = new RedisTestData();
             result.values[iDate].dateData = data.dateData;
-            int iInt = Arrays.binarySearch(key.innerKeys, "int");
+            int iInt = Arrays.binarySearch(result.innerKeys, "int");
             result.values[iInt] = new RedisTestData();
             result.values[iInt].intData = data.intData;
             return result;
