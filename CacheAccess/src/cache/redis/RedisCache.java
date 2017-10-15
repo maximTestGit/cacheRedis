@@ -9,8 +9,6 @@ import cache.serialize.DataSerializer;
 import cache.base.impl.CacheBase;
 import cache.partitions.CacheGetterMerger;
 import cache.partitions.CacheSetterSplitter;
-import cache.transform.CacheGetterTransformer;
-import cache.transform.CacheSetterFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,14 +18,13 @@ import redis.clients.jedis.Jedis;
  *
  * @author maxim
  * @param <TData>
- * @param <TPersist>
  */
 public class RedisCache<TData>
         extends CacheBase<TData> {
 
     protected enum RedisDataType {
         STRING,
-        LIST,
+        //LIST,
         HASH
     }
     private Jedis server;
@@ -48,8 +45,6 @@ public class RedisCache<TData>
 
     public RedisCache(
             String serverName, int port,
-//            CacheSetterFormatter<TData, TPersist> setterFormatter,
-//            CacheGetterTransformer<TData, TPersist> getterTransformer,
             CacheSetterSplitter<TData> setterSplitter,
             CacheGetterMerger<TData> getterMerger,
             DataSerializer serializer) {
@@ -71,9 +66,9 @@ public class RedisCache<TData>
             case STRING:
                 persistString(data);
                 break;
-            case LIST:
-                persistList(data);
-                break;
+//            case LIST:
+//                persistList(data);
+//                break;
             case HASH:
                 persistHash(data);
                 break;
@@ -85,11 +80,7 @@ public class RedisCache<TData>
     private RedisDataType determineRedisType(KeyValues<TData> data) {
         RedisDataType result;
         if (data.innerKeys == null) {
-            if (data.values.length == 1) {
-                result = RedisDataType.STRING;
-            } else {
-                result = RedisDataType.LIST;
-            }
+            result = RedisDataType.STRING;
         } else {
             result = RedisDataType.HASH;
 
@@ -101,15 +92,15 @@ public class RedisCache<TData>
         this.getServer().set(data.outerKey, getSerializer().serialize(data.values[0]));
     }
 
-    private void persistList(KeyValues<TData> data) {
-        ArrayList<String> strings = new ArrayList<String>(data.values.length);
-        for (int i = 0; i < data.values.length; i++) {
-            strings.add(getSerializer().serialize(data.values[i]));
-        }
-        String[] stringArray = new String[strings.size()];
-        this.getServer().lpush(data.outerKey, stringArray);
-    }
-
+//    private void persistList(KeyValues<TData> data) {
+//        ArrayList<String> strings = new ArrayList<String>(data.values.length);
+//        for (int i = 0; i < data.values.length; i++) {
+//            strings.add(getSerializer().serialize(data.values[i]));
+//        }
+//        String[] stringArray = new String[strings.size()];
+//        this.getServer().lpush(data.outerKey, stringArray);
+//    }
+    
     private void persistHash(KeyValues<TData> data) {
         Map<String, String> set = new HashMap<>();
         for (int i = 0; i < data.values.length; i++) {

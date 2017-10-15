@@ -7,9 +7,14 @@ package cache.redis;
 
 import cache.base.interfaces.Cache;
 import cache.base.interfaces.CacheSetter;
+import cache.partitions.CacheGetterMerger;
 import cache.partitions.CacheGetterMergerSimplObj;
+import cache.partitions.CacheSetterSplitter;
 import cache.partitions.CacheSetterSplitterSimpleObj;
+import cache.serialize.DataSerializer;
 import cache.serialize.DataSerializerJson;
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.Date;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -137,32 +142,70 @@ public class RedisCacheTest {
 //        fail("The test case is a prototype.");
 //    }
     @Test
-    public void testSetData() {
+    public void testSetData1() {
         System.out.println("setData");
         Cache.Key key = new Cache.Key();
-        key.outerKey = "testSetData";
+        key.outerKey = "testSetData:1";
 
         Date date = new Date();
         long id = date.getTime();
-        RedisData data = new RedisData();
+        RedisTestData data = new RedisTestData();
         data.intData = id;
         data.dateData = date;
 
         CacheSetter<Object> instance = new RedisCache<>(
                 "localhost", 6379,
                 new CacheSetterSplitterSimpleObj(),
-                new CacheGetterMergerSimplObj(),
+                null,
                 new DataSerializerJson()
         );
         instance.setData(key, data);
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
     }
 
-    public class RedisData {
+    @Test
+    public void testSetData2() {
+        System.out.println("setData");
+        Cache.Key key = new Cache.Key();
+        key.outerKey = "testSetData:2";
+        key.innerKeys = new String[]{"date", "int"};
+
+        Date date = new Date();
+        long id = date.getTime();
+        RedisTestData data = new RedisTestData();
+        data.intData = id;
+        data.dateData = date;
+
+        CacheSetter<RedisTestData> instance = new RedisCache<>(
+                "localhost", 6379,
+                new CacheSetterSplitterRedisTestData(),
+                null,
+                new DataSerializerJson()
+        );
+        instance.setData(key, data);
+    }
+
+    public class RedisTestData {
 
         public Long intData;
         public Date dateData;
 
     }
-}
+
+    public class CacheSetterSplitterRedisTestData implements CacheSetterSplitter<RedisTestData> {
+
+        @Override
+        public Cache.KeyValues<RedisTestData> split(Cache.Key key, RedisTestData data) {
+            Cache.KeyValues<RedisTestData> result = new Cache.KeyValues<>(key);
+            result.values = (RedisTestData[]) Array.newInstance(RedisTestData.class, 2);
+            int iDate = Arrays.binarySearch(key.innerKeys, "date");
+            result.values[iDate] = new RedisTestData();
+            result.values[iDate].dateData = data.dateData;
+            int iInt = Arrays.binarySearch(key.innerKeys, "int");
+            result.values[iInt] = new RedisTestData();
+            result.values[iInt].intData = data.intData;
+            return result;
+        }
+
+    }
+
+   }
