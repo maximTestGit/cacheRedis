@@ -8,6 +8,7 @@ package cache.redis;
 import cache.base.interfaces.Cache;
 import cache.base.interfaces.CacheSetter;
 import cache.partitions.CacheSetterSplitter;
+import cache.partitions.CacheSetterSplitterRedisStringData;
 import cache.serialize.DataSerializerJson;
 import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
@@ -141,14 +142,14 @@ public class RedisCacheTest {
     @Test
     public void testSetData1() {
         System.out.println("setData");
-        Cache.Key key = new Cache.Key();
-        key.outerKey = "testSetData:1";
-
         Date date = new Date();
         long id = date.getTime();
         RedisTestData data = new RedisTestData();
         data.intData = id;
         data.dateData = date;
+
+        Cache.Key key = new Cache.Key();
+        key.outerKey = "testSetData:1:"+id;
 
         CacheSetter<Object> instance = new RedisCache<>(
                 "localhost", 6379,
@@ -162,15 +163,15 @@ public class RedisCacheTest {
     @Test
     public void testSetData2() {
         System.out.println("setData");
-        Cache.Key key = new Cache.Key();
-        key.outerKey = "testSetData:2";
-        key.innerKeys = new String[]{"date", "int"};
-
         Date date = new Date();
         long id = date.getTime();
         RedisTestData data = new RedisTestData();
         data.intData = id;
         data.dateData = date;
+
+        Cache.Key key = new Cache.Key();
+        key.outerKey = "testSetData:2:"+id;
+        key.innerKeys = new String[]{"date", "int"};
 
         CacheSetter<RedisTestData> instance = new RedisCache<>(
                 "localhost", 6379,
@@ -195,7 +196,7 @@ public class RedisCacheTest {
 
         CacheSetter<String> instance = new RedisCache<>(
                 "localhost", 6379,
-                new CacheSetterSplitterRedisTestStringData(),
+                new CacheSetterSplitterRedisStringData(),
                 null,
                 new DataSerializerJson()
         );
@@ -236,17 +237,6 @@ public class RedisCacheTest {
             return result;
         }
 
-    }
-
-    public class CacheSetterSplitterRedisTestStringData implements CacheSetterSplitter<String> {
-
-        @Override
-        public Cache.KeyValues<String> split(Cache.Key key, String data) {
-            Cache.KeyValues<String> result = new Cache.KeyValues<>(key);
-            result.values = (String[]) Array.newInstance(String.class, 1);
-            result.values[0] = data;
-            return result;
-        }
     }
 
 }

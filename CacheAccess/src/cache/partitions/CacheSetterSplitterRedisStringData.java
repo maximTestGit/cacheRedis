@@ -1,0 +1,24 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package cache.partitions;
+
+import cache.base.interfaces.Cache;
+import java.lang.reflect.Array;
+
+/**
+ *
+ * @author maxim
+ */
+public class CacheSetterSplitterRedisStringData implements CacheSetterSplitter<String> {
+
+    @Override
+    public Cache.KeyValues<String> split(Cache.Key key, String data) {
+        Cache.KeyValues<String> result = new Cache.KeyValues<>(key);
+        result.values = (String[]) Array.newInstance(String.class, 1);
+        result.values[0] = data;
+        return result;
+    }
+}
