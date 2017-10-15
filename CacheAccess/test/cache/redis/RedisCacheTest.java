@@ -7,11 +7,7 @@ package cache.redis;
 
 import cache.base.interfaces.Cache;
 import cache.base.interfaces.CacheSetter;
-import cache.partitions.CacheGetterMerger;
-import cache.partitions.CacheGetterMergerSimplObj;
 import cache.partitions.CacheSetterSplitter;
-import cache.partitions.CacheSetterSplitterSimpleObj;
-import cache.serialize.DataSerializer;
 import cache.serialize.DataSerializerJson;
 import java.lang.reflect.Array;
 import java.util.Arrays;
@@ -191,6 +187,18 @@ public class RedisCacheTest {
 
     }
 
+    public class CacheSetterSplitterSimpleObj implements CacheSetterSplitter<Object> {
+
+        @Override
+        public Cache.KeyValues<Object> split(Cache.Key key, Object data) {
+            Cache.KeyValues<Object> result = new Cache.KeyValues<>(key);
+            result.values = (Object[]) Array.newInstance(Object.class, 1);
+            result.values[0] = data;
+            return result;
+        }
+
+    }
+
     public class CacheSetterSplitterRedisTestData implements CacheSetterSplitter<RedisTestData> {
 
         @Override
@@ -208,4 +216,15 @@ public class RedisCacheTest {
 
     }
 
-   }
+    public class CacheSetterSplitterRedisTestStringData implements CacheSetterSplitter<String> {
+
+        @Override
+        public Cache.KeyValues<String> split(Cache.Key key, String data) {
+            Cache.KeyValues<String> result = new Cache.KeyValues<>(key);
+            result.values = (String[]) Array.newInstance(String.class, 1);
+            result.values[0] = data;
+            return result;
+        }
+    }
+
+}
