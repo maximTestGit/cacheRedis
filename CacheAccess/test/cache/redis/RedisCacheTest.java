@@ -154,7 +154,7 @@ public class RedisCacheTest {
                 null,
                 new DataSerializerJson()
         );
-        instance.setData("testSetData:1:" + id, data);
+         instance.setData(new Long(id).toString(), data);
     }
 
     @Test
@@ -175,7 +175,7 @@ public class RedisCacheTest {
                 null,
                 new DataSerializerJson()
         );
-        instance.setData("testSetData:2:" + id, data);
+        instance.setData(new Long(id).toString(), data);
     }
 
     @Test
@@ -189,11 +189,11 @@ public class RedisCacheTest {
 
         CacheSetter<String> instance = new RedisCache<>(
                 "localhost", 6379,
-                new CacheSetterSplitterRedisStringData(),
+                new CacheSetterSplitterRedisStringData("string:"),
                 null,
                 new DataSerializerJson()
         );
-        instance.setData("testSetData:3:" + id, data);
+        instance.setData(new Long(id).toString(), data);
     }
 
     public class RedisTestData {
@@ -208,7 +208,7 @@ public class RedisCacheTest {
         @Override
         public Cache.KeyValues<Object> split(String id, Object data) {
             Cache.KeyValues<Object> result = new Cache.KeyValues<>();
-            result.outerKey = id;
+            result.outerKey = "SimpleObj:"+id;
             result.values = (Object[]) Array.newInstance(Object.class, 1);
             result.values[0] = data;
             return result;
@@ -221,7 +221,7 @@ public class RedisCacheTest {
         @Override
         public Cache.KeyValues<RedisTestData> split(String id, RedisTestData data) {
             Cache.KeyValues<RedisTestData> result = new Cache.KeyValues<>();
-            result.outerKey = id;
+            result.outerKey = "RedisTestData:"+id;
             result.innerKeys = new String[]{"date", "int"};
             result.values = (RedisTestData[]) Array.newInstance(RedisTestData.class, 2);
             int iDate = Arrays.binarySearch(result.innerKeys, "date");
